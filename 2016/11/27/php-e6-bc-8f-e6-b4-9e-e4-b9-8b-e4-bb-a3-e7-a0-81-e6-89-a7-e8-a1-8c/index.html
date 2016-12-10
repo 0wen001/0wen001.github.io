@@ -6,14 +6,57 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives | Hexo</title>
+  <title>php漏洞之代码执行 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+  <meta name="description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
+
+执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
+
+码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
+
+如何去避免此类漏洞的发生。
+
+
+
+
+1.静态函数执行1.1 eval函数和assert函数
+
+    这两个函数都是将它们的参数直接当做ph">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php漏洞之代码执行">
+<meta property="og:url" content="http://yoursite.com/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
+
+执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
+
+码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
+
+如何去避免此类漏洞的发生。
+
+
+
+
+1.静态函数执行1.1 eval函数和assert函数
+
+    这两个函数都是将它们的参数直接当做ph">
+<meta property="og:updated_time" content="2016-12-10T09:08:03.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="php漏洞之代码执行">
+<meta name="twitter:description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
+
+执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
+
+码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
+
+如何去避免此类漏洞的发生。
+
+
+
+
+1.静态函数执行1.1 eval函数和assert函数
+
+    这两个函数都是将它们的参数直接当做ph">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -137,177 +180,216 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/12/10/hello-world/" class="archive-article-date">
-  	<time datetime="2016-12-10T08:43:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-12-10</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/12/10/hello-world/">Hello World</a>
+    <h1 class="article-title" itemprop="name">
+      php漏洞之代码执行
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/27/hctf2016-writeup/" class="archive-article-date">
-  	<time datetime="2016-11-27T13:45:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/27/hctf2016-writeup/">hctf2016 writeup</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-	<i class="icon-book icon"></i>
-	<a class="article-category-link" href="/categories/ctf/">ctf</a>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/" class="archive-article-date">
+        <a href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/" class="archive-article-date">
   	<time datetime="2016-11-27T12:33:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-27</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/">php漏洞之代码执行</a>
-    </h1>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<pre>    代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
 
-        <div class="article-info info-on-right">
-          
-          
+执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
+
+码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
+
+如何去避免此类漏洞的发生。
+
+</pre>
+
+</blockquote>
+<h2 id="1-静态函数执行"><a href="#1-静态函数执行" class="headerlink" title="1.静态函数执行"></a>1.静态函数执行</h2><p></p><h3>1.1 eval函数和assert函数<p></p>
+<pre>
+    这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下：
+</pre>
+<pre lang="php" line="1" escaped="true">
+<?php
+    assert('phpinfo()');
+?>
+</pre>
+
+<h3 id="1-2preg-replace-函数"><a href="#1-2preg-replace-函数" class="headerlink" title="1.2preg_replace()函数"></a>1.2preg_replace()函数</h3><pre>
+    preg_replace()函数作用是对字符串进行正则处理，测试代码如下：
+</pre>
+<pre lang="php" line="1" escaped="true">
+<?php
+    preg_replace('/\[(.*)\]/e', '\\1', $_GET['str']);
+?>
+</pre>
+![31](http://www.0wen.cc/wp-content/uploads/2016/11/31.png)
+
+## 2.动态函数执行
+<pre lang="php" line="1" escaped="true">
+<?php
+    $_GET['a']($_GET['b']);
+?>
+</pre>
+![32](http://www.0wen.cc/wp-content/uploads/2016/11/32.png)
+<h2>3.回调函数执行
+
+<pre>
+    call_user_func()和array_map()等多个函数都有调用其他函数的功能，其中一个参数为要调
+用的函数名，如果这个传入的函数名可控，那么就可以进行代码注入
+    以call_user_func()为例，写一个小demo：
+</pre>
+<pre lang="php" line="1" escaped="true">
+<?php
+    $b = "phpinfo()";
+    call_user_func($_GET['a'],$b);
+?>
+</pre>
+![33](http://www.0wen.cc/wp-content/uploads/2016/11/33.png)
+
+## 4.文件包含
+
+<pre>
+    利用文件包含漏洞进行代码执行。如本地包含、远程包含（allow_url_include=on）、及
+各种协议(filter、input等)，以及包含截断的姿势：%00截断、 windows 240个./截断 、
+linux下2038个./组合截断、？伪截断
+    php://filter/convert.base64-encode/resource
+    php://input
+    data:text/plain,
+    等等
+</pre>
+
+<h2 id="5-通过addslashes-过滤后的绕过"><a href="#5-通过addslashes-过滤后的绕过" class="headerlink" title="5.通过addslashes()过滤后的绕过"></a>5.通过addslashes()过滤后的绕过</h2><pre lang="php" line="1" escaped="true">
+<?php
+    $str = "echo \"hello".$_GET['name']."!!!\";";
+    eval($str);
+?>
+</pre></h2></h3>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
 	<div class="article-category tagcloud">
 	<i class="icon-book icon"></i>
 	<a class="article-category-link" href="/categories/php漏洞/">php漏洞</a><a class="article-category-link" href="/categories/php漏洞/代码执行/">代码执行</a>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/" class="archive-article-date">
-  	<time datetime="2016-11-10T06:33:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/">php漏洞之mysql注入（二）</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-	<i class="icon-book icon"></i>
-	<a class="article-category-link" href="/categories/mysql/">mysql</a><a class="article-category-link" href="/categories/mysql/php漏洞/">php漏洞</a><a class="article-category-link" href="/categories/mysql/php漏洞/注入/">注入</a>
-	</div>
+  
+<nav id="article-nav">
+  
+    <a href="/2016/11/27/hctf2016-writeup/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          hctf2016 writeup
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">php漏洞之mysql注入（二）</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89/" class="archive-article-date">
-  	<time datetime="2016-11-06T13:57:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-06</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89/">php漏洞之mysql注入（一）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-	<i class="icon-book icon"></i>
-	<a class="article-category-link" href="/categories/mysql/">mysql</a><a class="article-category-link" href="/categories/mysql/注入/">注入</a>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
-    
+
+
 
 
           </div>
@@ -330,8 +412,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

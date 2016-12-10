@@ -6,14 +6,45 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives | Hexo</title>
+  <title>hctf2016 writeup | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+  <meta name="description" content="Level-11. misc 杂项签到
+    根据题目链接下载了一个流量包文件，打开简单分析了一下内容。管理员登录bash后查
+看function.py的内容，代码如下：
+
+
+#!/usr/bin/env python
+# coding:utf-8
+__author__ = &apos;Aklis&apos;
+from Crypto import Random
+from Crypto.Cipher import A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hctf2016 writeup">
+<meta property="og:url" content="http://yoursite.com/2016/11/27/hctf2016-writeup/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Level-11. misc 杂项签到
+    根据题目链接下载了一个流量包文件，打开简单分析了一下内容。管理员登录bash后查
+看function.py的内容，代码如下：
+
+
+#!/usr/bin/env python
+# coding:utf-8
+__author__ = &apos;Aklis&apos;
+from Crypto import Random
+from Crypto.Cipher import A">
+<meta property="og:updated_time" content="2016-12-10T09:08:03.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="hctf2016 writeup">
+<meta name="twitter:description" content="Level-11. misc 杂项签到
+    根据题目链接下载了一个流量包文件，打开简单分析了一下内容。管理员登录bash后查
+看function.py的内容，代码如下：
+
+
+#!/usr/bin/env python
+# coding:utf-8
+__author__ = &apos;Aklis&apos;
+from Crypto import Random
+from Crypto.Cipher import A">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -137,177 +168,278 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-hctf2016-writeup" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/12/10/hello-world/" class="archive-article-date">
-  	<time datetime="2016-12-10T08:43:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-12-10</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/12/10/hello-world/">Hello World</a>
+    <h1 class="article-title" itemprop="name">
+      hctf2016 writeup
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/27/hctf2016-writeup/" class="archive-article-date">
+        <a href="/2016/11/27/hctf2016-writeup/" class="archive-article-date">
   	<time datetime="2016-11-27T13:45:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-27</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/27/hctf2016-writeup/">hctf2016 writeup</a>
-    </h1>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Level-1"><a href="#Level-1" class="headerlink" title="Level-1"></a>Level-1</h2><h3 id="1-misc-杂项签到"><a href="#1-misc-杂项签到" class="headerlink" title="1. misc 杂项签到"></a>1. misc 杂项签到</h3><pre>
+    根据题目链接下载了一个流量包文件，打开简单分析了一下内容。管理员登录bash后查
+看function.py的内容，代码如下：
+</pre>
+<pre lang="python" line="1" escaped="true">
+#!/usr/bin/env python
+# coding:utf-8
+__author__ = 'Aklis'
+from Crypto import Random
+from Crypto.Cipher import AES
+import sys
+import base64
+def decrypt(encrypted, passphrase):
+  IV = encrypted[:16]
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.decrypt(encrypted[16:])
+def encrypt(message, passphrase):
+  IV = message[:16]
+  length = 16
+  count = len(message)
+  padding = length - (count % length)
+  message = message + '\0' * padding
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.encrypt(message)
+IV = 'YUFHJKVWEASDGQDH'
+message = IV + 'flag is hctf{xxxxxxxxxxxxxxx}'
+print len(message)
+example = encrypt(message, 'Qq4wdrhhyEWe4qBF')
+print example
+example = decrypt(example, 'Qq4wdrhhyEWe4qBF') 
+print example
+</pre>
+<pre>
+    此外,流量中还获取到了密文flag的base64形式: mbZoEMrhAO0WWeugNjqNw3U6Tt2C+rw
+pgpbdWRZgfQI3MAh0sZ9qjnziUKkV90XhAOkIs/OXoYVw5uQDjVvgNA== 根据代码中的解密算
+法可得到flag
+</pre>
+<pre lang="python" line="1" escaped="true">
+#!/usr/bin/env python
+# coding:utf-8
+__author__ = 'Aklis'
+from Crypto import Random
+from Crypto.Cipher import AES
+import sys
+import base64
+def decrypt(encrypted, passphrase):
+  IV = encrypted[:16]
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.decrypt(encrypted[16:])
+def encrypt(message, passphrase):
+  IV = message[:16]
+  length = 16
+  count = len(message)
+  padding = length - (count % length)
+  message = message + '\0' * padding
+  aes = AES.new(passphrase, AES.MODE_CBC, IV)
+  return aes.encrypt(message)
+IV = 'YUFHJKVWEASDGQDH'
+#message = IV + 'flag is hctf{xxxxxxxxxxxxxx}'
+message = base64.b64decode('mbZoEMrhAO0WWeugNjqNw3U6Tt2C+rwpgpbdWRZgfQI3MAh0sZ9qjnziUKkV90XhAOkIs/OXoYVw5uQDjVvgNA==')
+print len(message)
+#example = encrypt(message, 'Qq4wdrhhyEWe4qBF')
+#print example
+example = decrypt(message, 'Qq4wdrhhyEWe4qBF') 
+print example
+</pre>
+![35](http://www.0wen.cc/wp-content/uploads/2016/11/35.png)
 
-        <div class="article-info info-on-right">
-          
-          
+### web 2099年的flag
+
+<pre>
+    描述：only ios99 can get flag(Maybe you can easily get the flag in 2099
+看到描述后，果断构造UA得到flag： hctf{h77p_He4dEr_50_E4sy}
+</pre>
+![36](http://www.0wen.cc/wp-content/uploads/2016/11/36.png)
+
+## level-2 web RESTFUL
+
+<pre>
+    打开后看到 "Please <put> me some <money> more than <12450>!"再结合源代码
+看到的js,这道题考察队restful架构uri的认识,构造以下请求代码即可得到flag
+</12450></money></put></pre>
+<pre lang="javascript" line="1" escaped="true">
+$.ajax({
+        type: 'PUT',
+        url: "index.php/money/1000000",
+    }).done(function(r) {
+        $('#message').text(r['message']);
+    }).fail(function(){
+            console.log("Error: " + err.status);
+    });
+</pre>
+![37](http://www.0wen.cc/wp-content/uploads/2016/11/37.png)
+
+### misc pic again
+
+<pre>
+    LSB隐写
+</pre>
+![%e5%8e%9f%e5%9b%be](http://www.0wen.cc/wp-content/uploads/2016/11/原图.png)
+使用神器Stegsolve进行分析，发现图片最低有效位隐藏了一个rar文件，对这个文件进行修复后解
+压缩，得到一个linux可执行文件，直接strings 得到flag
+![38](http://www.0wen.cc/wp-content/uploads/2016/11/38.png)
+
+### msic gogogo
+
+<pre>
+    魂斗罗，加上金手指，通关得到flag
+</pre>
+
+<h3 id="web-兵者多诡"><a href="#web-兵者多诡" class="headerlink" title="web 兵者多诡"></a>web 兵者多诡</h3><pre>
+    这道题目是比较接近实战的一个题目，文件包含+文件上传getshell，首先通关包含漏
+洞拿到这道题的源码。然后去分析源码，发现不论上传什么，上传成功后都会被重命名
+随机数.png。
+    我开始的思路是上传一个执行命令的小马，然后用%00,或者？等去截断，但是一直都失
+败。然后我换了一个思路，上传zip包，zip包里有一个php小马，然后在用zip://协议去读
+，成功读取。但是我直到现在还是感觉第一种思路没问题，就是找不到原因。。。。。。。
+</pre>
+![39](http://www.0wen.cc/wp-content/uploads/2016/11/39.png)
+<pre>
+    gustbook直到结束还没看出来要考的是啥，xss？以为是xss,但是构造出payload，并且
+成功弹出cookie后，而且同时在xss平台等了一天的管理员cookie，也没信息。现在就是坐
+等官方writeup了
+-----------------------------------------------------------------
+    官方writeup出来了，果真是xss，绕过csp来打管理员cookie，这就非常尴尬了！！！！
+</pre>
+
+<h3 id="web-比香港记者还要快"><a href="#web-比香港记者还要快" class="headerlink" title="web  比香港记者还要快"></a>web  比香港记者还要快</h3><pre>
+    打开这道题，有一个注册页面，有一个登录页面，最初的想法会不会存在sql注入，fuzz了
+半天没什么进展。最后无意间发现.git和README.MD，里面描述开发人员的changelog。这下大
+概知道了代码的流程：
+    先注册为管理员，然后再降权成普通用户。这时候一个猥琐的想法就产生了，我一边注册，
+一边在降权之前登录，这就是管理员权限了。
+</pre>
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
 	<div class="article-category tagcloud">
 	<i class="icon-book icon"></i>
 	<a class="article-category-link" href="/categories/ctf/">ctf</a>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2016/11/27/hctf2016-writeup/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/" class="archive-article-date">
-  	<time datetime="2016-11-27T12:33:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/">php漏洞之代码执行</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-	<i class="icon-book icon"></i>
-	<a class="article-category-link" href="/categories/php漏洞/">php漏洞</a><a class="article-category-link" href="/categories/php漏洞/代码执行/">代码执行</a>
-	</div>
+  
+<nav id="article-nav">
+  
+    <a href="/2016/12/10/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Hello World
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">php漏洞之代码执行</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/" class="archive-article-date">
-  	<time datetime="2016-11-10T06:33:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/">php漏洞之mysql注入（二）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-	<i class="icon-book icon"></i>
-	<a class="article-category-link" href="/categories/mysql/">mysql</a><a class="article-category-link" href="/categories/mysql/php漏洞/">php漏洞</a><a class="article-category-link" href="/categories/mysql/php漏洞/注入/">注入</a>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89/" class="archive-article-date">
-  	<time datetime="2016-11-06T13:57:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-06</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-b8-80-ef-bc-89/">php漏洞之mysql注入（一）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-	<i class="icon-book icon"></i>
-	<a class="article-category-link" href="/categories/mysql/">mysql</a><a class="article-category-link" href="/categories/mysql/注入/">注入</a>
-	</div>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
 
-    
 
 
           </div>
@@ -330,8 +462,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
