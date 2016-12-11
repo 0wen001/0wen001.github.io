@@ -21,7 +21,7 @@
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/redis_5.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/redis_6.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/redis_7.png">
-<meta property="og:updated_time" content="2016-12-11T12:46:42.000Z">
+<meta property="og:updated_time" content="2016-12-11T12:47:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redis未授权访问总结">
 <meta name="twitter:description" content="redis简介redis是一个key-value存储系统。和Memcached类似，它支持存储的value类型相对更多，包括string(字符串), list(链表),  set(集合), zset(sorted set -有序集合)和hash（哈希类型）。这些数据类型都支持push/pop、add/remove及取交集并集和差集及更丰富的操作，而且这些操作都是原子性的。在此基础上，redis支持">
@@ -168,9 +168,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h2 id="redis简介"><a href="#redis简介" class="headerlink" title="redis简介"></a>redis简介</h2><p>redis是一个key-value存储系统。和Memcached类似，它支持存储的value类型相对更多，包括string(字符串), list(链表),  set(集合), zset(sorted set -有序集合)和hash（哈希类型）。这些数据类型都支持push/pop、add/remove及取交集并集和差集及更丰富的操作，而且这些操作都是原子性的。在此基础上，redis支持各种不同方式的排序。与memcached一样，为了保证效率，数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，并且在此基础上实现了master-slave(主从)同步。<br>redis写文件的权限就是redis运行权限，写文件既可以指定目录，也可以指定文件名。</p>
-<h2 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h2><blockquote>
-<p>假设redis以root权限运行，常规的思路，我们有三种方法进行getshell，一个是再web目录写一句话getshell，一个是反弹shell来getshell，一个是生成ssh密钥写进.ssh文件，从而实现免密码登录</p>
-</blockquote>
+<h2 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h2><p>假设redis以root权限运行，常规的思路，我们有三种方法进行getshell，一个是再web目录写一句话getshell，一个是反弹shell来getshell，一个是生成ssh密钥写进.ssh文件，从而实现免密码登录</p>
 <p>###1.如果服务器开启web服务(以kali linux2.0为例)，我们可以在/var/www/html目录写入一句话进行getshell<br><img src="http://oi0rrylhh.bkt.clouddn.com/redis_1.png" alt="Alt text"><br><img src="http://oi0rrylhh.bkt.clouddn.com/redis_2.png" alt="Alt text"><br><img src="http://oi0rrylhh.bkt.clouddn.com/redis_3.png" alt="Alt text"></p>
 <p>###2.以centos为例bash反弹<br>先在kali 上监听一个端口<br><code>nc -lvvp 12345</code><br>然后在centos上执行<br><img src="http://oi0rrylhh.bkt.clouddn.com/redis_4.png" alt="Alt text"><br>这时发现反弹成功<br><img src="http://oi0rrylhh.bkt.clouddn.com/redis_5.png" alt="Alt text"></p>
 <p>###3.以centos为例通过写入authorized_keys getshell<br>首先在本地生产一对密钥<br><img src="http://oi0rrylhh.bkt.clouddn.com/redis_6.png" alt="Alt text"><br>然后将id_rsa.pub文件写入redis服务器./ssh/目录，然后ssh免密码登录<br><img src="http://oi0rrylhh.bkt.clouddn.com/redis_7.png" alt="Alt text"></p>
