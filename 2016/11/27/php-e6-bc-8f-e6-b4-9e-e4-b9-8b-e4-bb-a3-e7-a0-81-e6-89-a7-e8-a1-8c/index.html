@@ -8,55 +8,37 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>php漏洞之代码执行 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
-
-执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
-
-码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
-
-如何去避免此类漏洞的发生。
-
-
-
-
+  <meta name="description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中如何去避免此类漏洞的发生。
 1.静态函数执行1.1 eval函数和assert函数
+这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下：
 
-    这两个函数都是将它们的参数直接当做ph">
+
+
+
+1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="php漏洞之代码执行">
 <meta property="og:url" content="http://yoursite.com/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
-
-执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
-
-码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
-
-如何去避免此类漏洞的发生。
-
-
-
-
+<meta property="og:description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中如何去避免此类漏洞的发生。
 1.静态函数执行1.1 eval函数和assert函数
+这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下：
 
-    这两个函数都是将它们的参数直接当做ph">
-<meta property="og:updated_time" content="2016-12-10T09:08:03.000Z">
+
+
+
+1">
+<meta property="og:updated_time" content="2016-12-11T11:43:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="php漏洞之代码执行">
-<meta name="twitter:description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
-
-执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
-
-码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
-
-如何去避免此类漏洞的发生。
-
-
-
-
+<meta name="twitter:description" content="代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中如何去避免此类漏洞的发生。
 1.静态函数执行1.1 eval函数和assert函数
+这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下：
 
-    这两个函数都是将它们的参数直接当做ph">
+
+
+
+1">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -198,23 +180,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<pre>    代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去
-
-执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代
-
-码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中
-
-如何去避免此类漏洞的发生。
-
-</pre>
-
-</blockquote>
+        <p>代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去执行。类比于sql注入，sql注入是将代码注入进sql服务器去执行，而代码执行是将代码注入到web去执行服务器。在本篇文章中将会总结php代码执行的情况，以及在开发中如何去避免此类漏洞的发生。</p>
 <h2 id="1-静态函数执行"><a href="#1-静态函数执行" class="headerlink" title="1.静态函数执行"></a>1.静态函数执行</h2><p></p><h3>1.1 eval函数和assert函数<p></p>
-<pre>
-    这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下：
-</pre>
-<pre lang="php" line="1" escaped="true">
+<pre><code>这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下：
+</code></pre><pre lang="php" line="1" escaped="true">
 <?php
     assert('phpinfo()');
 ?>
@@ -269,7 +238,8 @@ linux下2038个./组合截断、？伪截断
     $str = "echo \"hello".$_GET['name']."!!!\";";
     eval($str);
 ?>
-</pre></h2></h3>
+</pre>
+</h2></h3>
       
 
       
@@ -377,8 +347,8 @@ linux下2038个./组合截断、？伪截断
     </a>
   
   
-    <a href="/2016/11/10/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">php漏洞之mysql注入（二）</div>
+    <a href="/2016/11/27/redis/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">redis未授权访问总结</div>
       <i class="icon-circle-right"></i>
     </a>
   
