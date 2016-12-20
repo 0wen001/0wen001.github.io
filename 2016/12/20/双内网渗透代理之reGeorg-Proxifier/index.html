@@ -17,11 +17,11 @@
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg1.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg2.png">
 <meta property="og:image" content=".http://oi0rrylhh.bkt.clouddn.com/regeorg3.png">
-<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg7.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg8.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg4.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg5.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/regeorg6.png">
-<meta property="og:updated_time" content="2016-12-20T06:20:06.000Z">
+<meta property="og:updated_time" content="2016-12-20T11:31:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="双内网渗透代理之reGeorg+Proxifier">
 <meta name="twitter:description" content="昨天友情检测了一下学校某网站，一开始就发现一个sql注入，这里就不详细介绍sql注入详细过程了，很常规的一个思路，通过页面报错得到是用wamp搭建的站，mysql为root权限，读到配置文件，得到网站的根目录，写下马，菜刀连之，发现是system 权限，而且3389端口开放。">
@@ -174,7 +174,7 @@
         <p>昨天友情检测了一下学校某网站，一开始就发现一个sql注入，这里就不详细介绍sql注入详细过程了，很常规的一个思路，通过页面报错得到是用wamp搭建的站，mysql为root权限，读到配置文件，得到网站的根目录，写下马，菜刀连之，发现是system 权限，而且3389端口开放。<br><a id="more"></a><br>这时候出现了问题，外网访问3389端口的时候，发现连接不上，只对内网开放。这就很尴尬了，我在内网中，服务器也在内网中，而且我没有公网机器，<br>那么该怎么办？尝试利用<code>reDuh</code>和<code>Tunna</code>都利用不成功，因为php无socket扩展。最后终于在github上找到了<a href="https://github.com/sensepost/reGeorg.git" target="_blank" rel="external"><code>reGeorg</code></a>，配合<code>Proxifier</code>终于连接进去内网了。</p>
 <p>由于这个工具第一次体验感觉还不错，很稳定。因此在这记录一下<code>reGeorg+Proxifier</code>的配置及其使用。</p>
 <h3 id="下载地址-：https-github-com-sensepost-reGeorg-git"><a href="#下载地址-：https-github-com-sensepost-reGeorg-git" class="headerlink" title="下载地址 ：https://github.com/sensepost/reGeorg.git"></a>下载地址 ：<code>https://github.com/sensepost/reGeorg.git</code></h3><p><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg1.png" alt="Alt text"><br>其中.py是py的proxy脚本，其他后缀的都是对应的web服务器与proxy连接的文件。</p>
-<p>由于我拿的这个网站是php的，所以将tunnel.nosocket.php上传至web服务器，访问此文件若显示如下图，则第一步完成。<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg2.png" alt="Alt text"><br><img src=".http://oi0rrylhh.bkt.clouddn.com/regeorg3.png" alt="Alt text"><br>第二步：运行py脚本(先安装socket3模块)<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg7.png" alt="Alt text"><br>第三步：配置<code>Proxifier</code><br>打开软件后，进入代理服务器，添加<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg4.png" alt="Alt text"><br>然后将代理规则改成 proxy socket5 127.0.0.1<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg5.png" alt="Alt text"><br>这时候访问，成功进入连上3389<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg6.png" alt="Alt text"></p>
+<p>由于我拿的这个网站是php的，所以将tunnel.nosocket.php上传至web服务器，访问此文件若显示如下图，则第一步完成。<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg2.png" alt="Alt text"><br><img src=".http://oi0rrylhh.bkt.clouddn.com/regeorg3.png" alt="Alt text"><br>第二步：运行py脚本(先安装socket3模块)<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg8.png" alt="Alt text"><br>第三步：配置<code>Proxifier</code><br>打开软件后，进入代理服务器，添加<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg4.png" alt="Alt text"><br>然后将代理规则改成 proxy socket5 127.0.0.1<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg5.png" alt="Alt text"><br>这时候访问，成功进入连上3389<br><img src="http://oi0rrylhh.bkt.clouddn.com/regeorg6.png" alt="Alt text"></p>
 
       
 
