@@ -9,27 +9,21 @@
   <title>php漏洞之代码执行 | 0wen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="php漏洞之执行漏洞
-执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致
-
-代码执行静态函数执行eval函数和assert函数这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下12">
+执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致">
 <meta property="og:type" content="article">
 <meta property="og:title" content="php漏洞之代码执行">
 <meta property="og:url" content="http://yoursite.com/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/index.html">
 <meta property="og:site_name" content="0wen's Blog">
 <meta property="og:description" content="php漏洞之执行漏洞
-执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致
-
-代码执行静态函数执行eval函数和assert函数这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下12">
+执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/zhixing1.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/zhixing2.png">
 <meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/zhixing3.png">
-<meta property="og:updated_time" content="2016-12-11T14:49:37.000Z">
+<meta property="og:updated_time" content="2016-12-21T06:33:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="php漏洞之代码执行">
 <meta name="twitter:description" content="php漏洞之执行漏洞
-执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致
-
-代码执行静态函数执行eval函数和assert函数这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下12">
+执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致">
 <meta name="twitter:image" content="http://oi0rrylhh.bkt.clouddn.com/zhixing1.png">
   
     <link rel="alternative" href="/atom.xml" title="0wen&#39;s Blog" type="application/atom+xml">
@@ -177,9 +171,9 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="php漏洞之执行漏洞"><a href="#php漏洞之执行漏洞" class="headerlink" title="php漏洞之执行漏洞"></a>php漏洞之执行漏洞</h1><blockquote>
-<p>执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致</p>
-</blockquote>
+<p>执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致<br><a id="more"></a></p>
 <h2 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h2><h3 id="静态函数执行"><a href="#静态函数执行" class="headerlink" title="静态函数执行"></a>静态函数执行</h3><h4 id="eval函数和assert函数"><a href="#eval函数和assert函数" class="headerlink" title="eval函数和assert函数"></a>eval函数和assert函数</h4><p>这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">assert(<span class="string">'phpinfo()'</span>);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
+</blockquote>
 <h4 id="preg-replace-函数"><a href="#preg-replace-函数" class="headerlink" title="preg_replace()函数"></a>preg_replace()函数</h4><p>preg_replace()函数作用是对字符串进行正则处理，测试代码如下<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">preg_replace(<span class="string">'/\[(.*)\]/e'</span>, <span class="string">'\\1'</span>, $_GET[<span class="string">'str'</span>]);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
 <p><img src="http://oi0rrylhh.bkt.clouddn.com/zhixing1.png" alt="Alt text"></p>
 <h3 id="动态函数执行"><a href="#动态函数执行" class="headerlink" title="动态函数执行"></a>动态函数执行</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$_GET[<span class="string">'a'</span>]($_GET[<span class="string">'b'</span>]);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>

@@ -380,19 +380,8 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="php漏洞之执行漏洞"><a href="#php漏洞之执行漏洞" class="headerlink" title="php漏洞之执行漏洞"></a>php漏洞之执行漏洞</h1><blockquote>
-<p>执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致</p>
-</blockquote>
-<h2 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h2><h3 id="静态函数执行"><a href="#静态函数执行" class="headerlink" title="静态函数执行"></a>静态函数执行</h3><h4 id="eval函数和assert函数"><a href="#eval函数和assert函数" class="headerlink" title="eval函数和assert函数"></a>eval函数和assert函数</h4><p>这两个函数都是将它们的参数直接当做php代码来执行,测试代码如下<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">assert(<span class="string">'phpinfo()'</span>);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
-<h4 id="preg-replace-函数"><a href="#preg-replace-函数" class="headerlink" title="preg_replace()函数"></a>preg_replace()函数</h4><p>preg_replace()函数作用是对字符串进行正则处理，测试代码如下<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">preg_replace(<span class="string">'/\[(.*)\]/e'</span>, <span class="string">'\\1'</span>, $_GET[<span class="string">'str'</span>]);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
-<p><img src="http://oi0rrylhh.bkt.clouddn.com/zhixing1.png" alt="Alt text"></p>
-<h3 id="动态函数执行"><a href="#动态函数执行" class="headerlink" title="动态函数执行"></a>动态函数执行</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$_GET[<span class="string">'a'</span>]($_GET[<span class="string">'b'</span>]);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
-<p><img src="http://oi0rrylhh.bkt.clouddn.com/zhixing2.png" alt="Alt text"></p>
-<h3 id="回调函数执行"><a href="#回调函数执行" class="headerlink" title="回调函数执行"></a>回调函数执行</h3><p>call_user_func()和array_map()等多个函数都有调用其他函数的功能，其中一个参数为要调用的函数名，如果这个传入的函数名可控，那么就可以进行代码注入<br>以call_user_func()为例，写一个小demo：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$b = <span class="string">"phpinfo()"</span>;</div><div class="line">call_user_func($_GET[<span class="string">'a'</span>],$b);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
-<p><img src="http://oi0rrylhh.bkt.clouddn.com/zhixing3.png" alt="Alt text"></p>
-<h3 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h3><p>利用文件包含漏洞进行代码执行。如本地包含、远程包含（allow_url_include=on）、及<br>各种协议(filter、input等)，以及包含截断的姿势：%00截断、 windows 240个./截断 、<br>linux下2038个./组合截断、？伪截断<br><code>php://filter/convert.base64-encode/resource</code><br><code>php://input</code><br><code>php://zip</code><br><code>php://phar</code><br><code>data:text/plain,</code><br>等等</p>
-<h2 id="命令执行漏洞"><a href="#命令执行漏洞" class="headerlink" title="命令执行漏洞"></a>命令执行漏洞</h2><p>php里有7个常用函数可以执行命令，分别是<code>system()</code>,<code>exec()</code>,<code>shell_exec()</code>,<code>pcntl_exec()</code>,<code>popen()</code>,<code>pro_open()</code>,还有反引号(它使用<code>shell_exec()</code>)函数来执行命令的</p>
-<h3 id="防命令注入函数"><a href="#防命令注入函数" class="headerlink" title="防命令注入函数"></a>防命令注入函数</h3><p><code>escapeshellcmd()</code>和<code>escapeshellarg</code></p>
-
+<p>执行漏洞分为代码执行漏洞和命令执行漏洞。代码执行漏洞是代码执行漏洞是指应用程序过滤不严格，用户可以通过请求将代码注入到应用中去。而命令执行漏洞是指可以执行系统命令或者应用指令(cmd命令或bash)的漏洞，php的命令执行漏洞主要基于一些函数的过滤不严导致<br>
+        <a class="article-more-a"  href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/#more">more >></a>
       
 
       
